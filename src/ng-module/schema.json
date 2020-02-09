@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "NgNgrx",
+    "title": "Angular Ngrx Options Schema",
+    "type": "object",
+    "description": "Creates a new generic NgNgrx definition in the given or default project.",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the NgNgrx.",
+        "$default": {
+          "$source": "argv",
+          "index": 0
+        }
+      },
+      "path": {
+        "type": "string",
+        "format": "path",
+        "description": "The path.",
+        "visible": false
+      },
+      "project": {
+        "type": "string",
+        "description": "The name of the project.",
+        "$default": {
+          "$source": "projectName"
+        }
+      }
+    },
+    "required": [
+      "name"
+    ]
+  }
+  
