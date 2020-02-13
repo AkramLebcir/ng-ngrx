@@ -1,4 +1,4 @@
-# Getting Started With Schematics
+# Getting Started With NG-NGRX
 
 This repository is a basic Schematic. Is a package build upon angular, whose objectif is to propose a better way of generating angular files.
 
