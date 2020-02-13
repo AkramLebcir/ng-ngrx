@@ -3,19 +3,29 @@ import { forkJoin } from 'rxjs';
 // Angular
 import { Injectable } from '@angular/core';
 // RxJS
-import { mergeMap, map, tap } from 'rxjs/operators';
+import { mergeMap, map, tap, delay } from 'rxjs/operators';
 // NGRX
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 // CRUD
 import { QueryResultsModel } from '../../_base/crud';
 // Services
-import { <%= classify(name) %>sService } from '../_services/';
+import { <%= classify(name) %>sService } from '../_services/<%= dasherize(app) %>s.service';
 // State
 import { AppState } from '../../../core/reducers';
 // Actions
 import {
+    <%= classify(name) %>ActionTypes,
     <%= classify(name) %>sPageRequested,
+    <%= classify(name) %>sPageLoaded,
+    Many<%= classify(name) %>sDeleted,
+    One<%= classify(name) %>Deleted,
+    <%= classify(name) %>ActionToggleLoading,
+    <%= classify(name) %>sPageToggleLoading,
+    <%= classify(name) %>Updated,
+    <%= classify(name) %>sStatusUpdated,
+    <%= classify(name) %>Created,
+    <%= classify(name) %>OnServerCreated
 } from '../_actions/<%= dasherize(name) %>.actions';
 import { of } from 'rxjs';
 
@@ -108,7 +118,7 @@ export class <%= classify(name) %>Effects {
                 this.store.dispatch(this.showActionLoadingDistpatcher);
                 return this.<%= classify(name) %>sService.create<%= classify(name) %>(payload.<%= classify(name) %>).pipe(
                     tap(res => {
-                        this.store.dispatch(new <%= classify(name) %>Created({ <%= classify(name) %>: res }));
+                        this.store.dispatch(new <%= classify(name) %>Created({ <%= dasherize(name) %>: res }));
                     })
                 );
             }),

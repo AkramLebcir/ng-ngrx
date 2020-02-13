@@ -23,7 +23,7 @@ out
 core : 
     /<module name>/ :
         _services/
-            <module name>.service.ts
+            <module name>s.service.ts
 
 views/ : 
     pages/ :
@@ -52,7 +52,7 @@ core/ :
         _actions/
             <name>.actions.ts
         _datasource/
-            <name>.datasource.ts
+            <name>s.datasource.ts
         _effects/
             <name>.effects.ts
         _models/
@@ -61,8 +61,12 @@ core/ :
             <name>.reducers.ts
         _selectors/
             <name>.selectors.ts
-        _state/
-            <name>.state.ts
+
+views/ : 
+    pages/ :
+        apps/ :
+            <module name>/ :
+                <module name>.module.ts // UPDATE
 ```
 
 That's it!

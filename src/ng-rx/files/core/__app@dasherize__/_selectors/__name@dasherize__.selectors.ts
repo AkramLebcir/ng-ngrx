@@ -1,37 +1,49 @@
-import {createFeatureSelector, createSelector} from "@ngrx/store";
-import {<%= classify(name) %>State} from "../_reducers/<%= dasherize(name) %>.reducer";
-import {<%= classify(name) %>Model} from "../_models/<%= dasherize(name) %>.model";
-import {HttpExtenstionsModel, QueryResultsModel} from "../../_base/crud";
-import {each} from 'lodash';
+// NGRX
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+// Lodash
+import { each } from 'lodash';
+// CRUD
+import { QueryResultsModel, HttpExtenstionsModel } from '../../_base/crud';
+// State
+import { <%= classify(name) %>sState } from '../_reducers/<%= dasherize(name) %>.reducers';
+import { <%= classify(name) %>Model } from '../_models/<%= dasherize(name) %>.model';
 
-export const select<%= classify(name) %>State = createFeatureSelector<<%= classify(name) %>State>('<%= classify(name) %>');
+export const select<%= classify(name) %>sState = createFeatureSelector<<%= classify(name) %>sState>('<%= dasherize(name) %>s');
 
-// export const selectGroupById = (groupId: string) => createSelector(
-// 	selectGroupsState,
-// 	groupsState => groupsState.entities[groupId]
-// );
-
-export const select<%= classify(name) %>PageLoading = createSelector(
-	select<%= classify(name) %>State,
-	<%= classify(name) %>State => <%= classify(name) %>State.listLoading
+export const select<%= classify(name) %>ById = (<%= classify(name) %>Id: number) => createSelector(
+    select<%= classify(name) %>sState,
+    <%= classify(name) %>sState => <%= classify(name) %>sState.entities[<%= classify(name) %>Id]
 );
 
-export const select<%= classify(name) %>PageError = createSelector(
-	select<%= classify(name) %>State,
-	<%= classify(name) %>State => <%= classify(name) %>State.listLoadingError
+export const select<%= classify(name) %>sPageLoading = createSelector(
+    select<%= classify(name) %>sState,
+    <%= classify(name) %>sState => <%= classify(name) %>sState.listLoading
 );
 
+export const select<%= classify(name) %>sActionLoading = createSelector(
+    select<%= classify(name) %>sState,
+    <%= classify(name) %>sState => <%= classify(name) %>sState.actionsloading
+);
 
-export const select<%= classify(name) %>InStore = createSelector(
-	select<%= classify(name) %>State,
-	<%= classify(name) %>State => {
-		const items: <%= classify(name) %>Model[] = [];
-		each(<%= classify(name) %>State.entities, element => {
-			items.push(element);
-		});
-		console.log(<%= classify(name) %>State.entities);
-		const httpExtension = new HttpExtenstionsModel();
-		const result: <%= classify(name) %>Model[] = httpExtension.sortArray(items, <%= classify(name) %>State.lastQuery.sortField, <%= classify(name) %>State.lastQuery.sortOrder);
-		return new QueryResultsModel(result, <%= classify(name) %>State.totalCount, '');
+export const selectLastCreated<%= classify(name) %>Id = createSelector(
+    select<%= classify(name) %>sState,
+    <%= classify(name) %>sState => <%= classify(name) %>sState.lastCreated<%= classify(name) %>Id
+);
 
-	});
+export const select<%= classify(name) %>sShowInitWaitingMessage = createSelector(
+    select<%= classify(name) %>sState,
+    <%= classify(name) %>sState => <%= classify(name) %>sState.showInitWaitingMessage
+);
+
+export const select<%= classify(name) %>sInStore = createSelector(
+    select<%= classify(name) %>sState,
+    <%= classify(name) %>sState => {
+        const items: <%= classify(name) %>Model[] = [];
+        each(<%= classify(name) %>sState.entities, element => {
+            items.push(element);
+        });
+        const httpExtension = new HttpExtenstionsModel();
+        const result: <%= classify(name) %>Model[] = httpExtension.sortArray(items, <%= classify(name) %>sState.lastQuery.sortField, <%= classify(name) %>sState.lastQuery.sortOrder);
+        return new QueryResultsModel(result, <%= classify(name) %>sState.totalCount, '');
+    }
+);

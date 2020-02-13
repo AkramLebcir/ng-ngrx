@@ -17,7 +17,7 @@ export class <%= classify(name) %>Service {
 
     getToken() {
 		this.http
-			.get<String>("/ws/public/authentificate/show-the-csrf-token")
+			.get<String>("/ws/public/") // _token
 			.subscribe(res => {
 				//console.log(res);
 				return res;

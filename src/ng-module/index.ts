@@ -4,6 +4,8 @@ import { getProject, buildDefaultPath } from '@schematics/angular/utility/projec
 import { parseName } from '@schematics/angular/utility/parse-name';
 import { strings } from '@angular-devkit/core';
 import { Schema } from './schema';
+// import { dasherize } from '@angular-devkit/core/src/utils/strings';
+// import { addDeclarationToAppModule } from './add-declaration-to-module.rule';
 
 
 // You don't have to export the function as default. You can also have more than one rule factory
@@ -19,13 +21,17 @@ export function ngModule(_options: Schema): Rule {
     _options.name = parsedPath.name;
     _options.path = parsedPath.path;
 
+    // const appModule = parsedPath.path+'/views/pages/apps/'+dasherize(_options.name)+'/'+dasherize(_options.name)+'.module.ts';
+
+    // const rule = branchAndMerge(addDeclarationToAppModule(appModule));
+
     const sourceTemplate = url('./files');
     const sourceParametrizeTemplate = apply(sourceTemplate,[
       template({
         ..._options,
         ...strings
       }),
-      move(parsedPath.path)
+      move(parsedPath.path),
     ]);
 
     tree = chain([

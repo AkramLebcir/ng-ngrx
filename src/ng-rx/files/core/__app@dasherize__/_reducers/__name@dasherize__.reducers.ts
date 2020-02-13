@@ -1,63 +1,90 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {QueryParamsModel} from "../../_base/crud";
-import {<%= classify(name) %>Model} from "../_models/<%= dasherize(name) %>.model";
-import {
-	<%= classify(name) %>Actions,
-	<%= classify(name) %>ActionTypes
-} from "../_actions/<%= dasherize(name) %>.actions";
+// NGRX
+import { createFeatureSelector } from '@ngrx/store';
+import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/entity';
+// Actions
+import { <%= classify(name) %>Actions, <%= classify(name) %>ActionTypes } from '../_actions/<%= dasherize(name) %>.actions';
+// Models
+import { <%= classify(name) %>Model } from '../_models/<%= dasherize(name) %>.model';
+import { QueryParamsModel } from '../../_base/crud';
 
+export interface <%= classify(name) %>sState extends EntityState<<%= classify(name) %>Model> {
+    listLoading: boolean;
+    actionsloading: boolean;
+    totalCount: number;
+    lastCreated<%= classify(name) %>Id: number;
+    lastQuery: QueryParamsModel;
+    showInitWaitingMessage: boolean;
+}
 
-export interface <%= classify(name) %>State extends EntityState<<%= classify(name) %>Model> {
-	totalCount: number;
-	listLoading: boolean;
-	listLoadingError: string;
-	lastQuery: QueryParamsModel;
-}
-export function selectMissionRef(obj: <%= classify(name) %>Model): string {
-	return obj.created_date_day;
-}
-export const adapter: EntityAdapter<<%= classify(name) %>Model> = createEntityAdapter<<%= classify(name) %>Model>({
-	selectId: selectMissionRef
+export const adapter: EntityAdapter<<%= classify(name) %>Model> = createEntityAdapter<<%= classify(name) %>Model>();
+
+export const initial<%= classify(name) %>sState: <%= classify(name) %>sState = adapter.getInitialState({
+    <%= dasherize(name) %>ForEdit: null,
+    listLoading: false,
+    actionsloading: false,
+    totalCount: 0,
+    lastCreated<%= classify(name) %>Id: undefined,
+    lastQuery: new QueryParamsModel({}),
+    showInitWaitingMessage: true
 });
 
-export const initialIndicatorsState: <%= classify(name) %>State = adapter.getInitialState({
-	listLoading: false,
-	totalCount: 0,
-	lastQuery: new QueryParamsModel({}),
-	listLoadingError: ''
-});
-
-export function <%= classify(name) %>Reducer(state= initialIndicatorsState, action: <%= classify(name) %>Actions ): <%= classify(name) %>State {
-	switch  (action.type) {
-		case <%= classify(name) %>ActionTypes.<%= classify(name) %>PageToggleLoading  : {
-			return {
-				...state,
-				listLoading: action.payload.isLoading,
-				listLoadingError : ''
-			};
-		}
-		case <%= classify(name) %>ActionTypes.<%= classify(name) %>PageError : {
-			return {
-				...state,
-				listLoading: false,
-				listLoadingError: action.payload.message
-			};
-		}
-
-		case <%= classify(name) %>ActionTypes.<%= classify(name) %>PageLoaded : {
-			console.log("reducer");
-			console.log(action.payload.<%= name %>s);
-			return adapter.addMany(action.payload.<%= name %>s,
-				{
-					...initialIndicatorsState,
-					listLoading: false,
-					listLoadingError: '',
-					lastQuery : action.payload.page,
-					totalCount: action.payload.totalCount,
-				});
-		}
-		default: {
-			return state;
-		}
-	}
+export function <%= classify(name) %>sReducer(state = initial<%= classify(name) %>sState, action: <%= classify(name) %>Actions): <%= classify(name) %>sState {
+    switch  (action.type) {
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>sPageToggleLoading: {
+            return {
+                ...state, listLoading: action.payload.isLoading, lastCreated<%= classify(name) %>Id: undefined
+            };
+        }
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>ActionToggleLoading: {
+            return {
+                ...state, actionsloading: action.payload.isLoading
+            };
+        }
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>OnServerCreated: return {
+            ...state
+        };
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>Created: return adapter.addOne(action.payload.<%= classify(name) %>, {
+            ...state, lastCreated<%= classify(name) %>Id: action.payload.<%= classify(name) %>.id
+        });
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>Updated: return adapter.updateOne(action.payload.partial<%= classify(name) %>, state);
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>sStatusUpdated: {
+            const _partial<%= classify(name) %>s: Update<<%= classify(name) %>Model>[] = [];
+            // tslint:disable-next-line:prefer-const
+            for (let i = 0; i < action.payload.<%= classify(name) %>s.length; i++) {
+                _partial<%= classify(name) %>s.push({
+				    id: action.payload.<%= classify(name) %>s[i].id,
+				    changes: {
+                        status: action.payload.status
+                    }
+			    });
+            }
+            return adapter.updateMany(_partial<%= classify(name) %>s, state);
+        }
+        case <%= classify(name) %>ActionTypes.One<%= classify(name) %>Deleted: return adapter.removeOne(action.payload.id, state);
+        case <%= classify(name) %>ActionTypes.Many<%= classify(name) %>sDeleted: return adapter.removeMany(action.payload.ids, state);
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>sPageCancelled: {
+            return {
+                ...state, listLoading: false, lastQuery: new QueryParamsModel({})
+            };
+        }
+        case <%= classify(name) %>ActionTypes.<%= classify(name) %>sPageLoaded: {
+            return adapter.addMany(action.payload.<%= classify(name) %>s, {
+                ...initial<%= classify(name) %>sState,
+                totalCount: action.payload.totalCount,
+                listLoading: false,
+                lastQuery: action.payload.page,
+                showInitWaitingMessage: false
+            });
+        }
+        default: return state;
+    }
 }
+
+export const get<%= classify(name) %>State = createFeatureSelector<<%= classify(name) %>Model>('<%= dasherize(name) %>s');
+
+export const {
+    selectAll,
+    selectEntities,
+    selectIds,
+    selectTotal
+} = adapter.getSelectors();
