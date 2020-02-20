@@ -15,6 +15,10 @@ to install the package
 
 ```bash
 ng g ng-ngrx:ng-module <module name>
+
+Or
+
+ng g ng-ngrx:ng-module --app=<module name>
 ```
 
 out
@@ -42,6 +46,14 @@ views/ :
 ```bash
 ng g ng-ngrx:ng-rx <name> <module name>
 
+Or
+
+ng g ng-ngrx:ng-rx <name>
+? What name would you like to use for the new app module ? <module name>
+
+Or
+
+ng g ng-ngrx:ng-module --name=<name> --app=<module name>
 ```
 
 out

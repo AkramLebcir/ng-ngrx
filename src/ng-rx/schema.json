@@ -17,7 +17,8 @@
         "description": "The name of the app.",
         "type": "string",
         "$default": {
-          "$source": "argv"
+          "$source": "argv",
+          "index": 1
         },
         "x-prompt": "What name would you like to use for the new app module ?"
       },
